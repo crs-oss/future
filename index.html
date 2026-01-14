@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>写给五年后的自己</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;font-family:"Georgia","Noto Serif SC",serif;background:radial-gradient(circle at top,#1b2735,#05070d 70%);color:#f2f2f2;overflow-x:hidden;}
+body.morning{background:radial-gradient(circle at top,#1b2735,#05070d 70%);color:#333;transition:background 6s,color 6s;}
+.stars{position:fixed; inset:0; z-index:0; pointer-events:none;}
+.star{position:absolute;border-radius:50%;background:white;box-shadow:0 0 8px rgba(255,255,255,.9);animation:starFloat linear infinite,starTwinkle ease-in-out infinite;}
+@keyframes starFloat{from{transform:translateY(110vh);}to{transform:translateY(-10vh);}}
+@keyframes starTwinkle{0%,100%{opacity:.5;}50%{opacity:1;}}
+.meteor{position:absolute;width:140px;height:2px;background:linear-gradient(90deg,white,transparent);transform:rotate(-45deg);animation:meteor 1.2s linear forwards;}
+@keyframes meteor{to{transform:translate(-300px,300px) rotate(-45deg);opacity:0;}}
+body.morning .stars{opacity:0;transition:opacity 6s;}
+section{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px; text-align:center; position:relative; z-index:1;}
+h1{font-size:clamp(1.6em,5vw,2.4em); line-height:1.6;}
+button{margin-top:20px; padding:10px 28px; border-radius:30px; border:1px solid rgba(255,255,255,.6); background:transparent; color:inherit; cursor:pointer;}
+textarea{width:100%; min-height:100px; border-radius:12px; border:none; padding:12px; font-family:inherit; margin-top:10px; max-width:500px; width:100%;display:block;margin:10px auto;}
+.lock{opacity:.75; font-size:.95em;}
+#letter{line-height:2;}
+.paragraph{margin-bottom:24px; opacity:0; color:#fff;
+  transform:translateY(30px);
+  transition:all 1.6s ease;
+  margin-bottom:36px;}
+  .paragraph.show{
+  opacity:1;
+  transform:translateY(0);
+}
+#editorSection{display:none;}
+#savedNotice{margin-top:10px; color:lightgreen;}
+
+
+/* ===== 星空 ===== */
+.stars{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+.star{
+  position:absolute;
+  border-radius:50%;
+  background:white;
+  box-shadow:0 0 8px rgba(255,255,255,.9);
+  animation:starFloat linear infinite,starTwinkle ease-in-out infinite;
+}
+
+@keyframes starFloat{
+  from{transform:translateY(110vh);}
+  to{transform:translateY(-10vh);}
+}
+
+@keyframes starTwinkle{
+  0%,100%{opacity:.5;}
+  50%{opacity:1;}
+}
+
+/* 流星 */
+.meteor{
+  position:absolute;
+  width:140px;
+  height:2px;
+  background:linear-gradient(90deg,white,transparent);
+  transform:rotate(-45deg);
+  animation:meteor 1.2s linear forwards;
+}
+
+@keyframes meteor{
+  to{transform:translate(-300px,300px) rotate(-45deg);opacity:0;}
+}
+
+
+</style>
+</head>
+<body>
+
+<audio id="bgm" autoplay loop>
+<source src="music/mayday.mp3" type="audio/mpeg"> 
+
+</audio>
+
+
+<div class="stars"></div>
+
+<!-- 编辑界面 -->
+<section id="editorSection">
+  <div>
+    <h2>📝 写给五年后的自己</h2>
+    <p>写下你想给未来自己的话：</p>
+    <textarea id="pastText" placeholder="正文内容"></textarea>
+    <textarea id="lockTextInput" placeholder="锁定内容，未来解锁显示"></textarea><br>
+    <button id="saveBtn">💾 保存信件</button>
+  <button class="clearBtn">🗑️ 清除已保存内容</button>
+    <p id="savedNotice"></p>
+  </div>
+</section>
+
+<!-- 封面 / 打开按钮 -->
+<section id="intro" style="display:none;">
+  <div>
+    <h1 id="typing">⏳ 打开未来的信件</h1>
+    <button id="openBtn">✉️ 打开信件</button>
+<button class="clearBtn">🗑️ 清除已保存内容</button>
+  </div>
+</section>
+
+<!-- 信件显示 -->
+<section id="letterSection" style="display:none;">
+  <div id="letter">
+    <div class="paragraph">亲爱的五年后的自己：</div>
+    <div class="paragraph" id="pastDisplay"></div>
+    <div class="paragraph lock" id="lockDisplay"></div>
+    <div id="replyBox" style="display:none !important;">
+      <p>✍️ 给五年前的自己留言</p>
+      <textarea id="reply"></textarea>
+      <button onclick="saveReply()">保存</button>
+      <div id="savedReply"></div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+/* 星空 */
+const starBox=document.querySelector(".stars");
+for(let i=0;i<160;i++){
+  const s=document.createElement("div");
+  s.className="star";
+  const size=Math.random()*2+1;
+  s.style.width=s.style.height=size+"px";
+  s.style.left=Math.random()*100+"%";
+  s.style.top=Math.random()*100+"%";
+  s.style.animationDuration=
+    `${20+Math.random()*30}s, ${3+Math.random()*3}s`;
+  starBox.appendChild(s);
+}
+
+
+setInterval(()=>{
+  const m=document.createElement("div");
+  m.className="meteor";
+  m.style.left=Math.random()*100+"%";
+  m.style.top=Math.random()*40+"%";
+  starBox.appendChild(m);
+  setTimeout(()=>m.remove(),1200);
+},8000);
+
+// 日期控制
+const target = new Date("2031-01-14");
+const now = new Date();
+const locked = now < target;
+
+// 读取保存内容
+const savedPast = localStorage.getItem("pastText");
+const savedLock = localStorage.getItem("lockText");
+const savedReply = localStorage.getItem("reply");
+
+// 页面元素
+const editor = document.getElementById("editorSection");
+const intro = document.getElementById("intro");
+const letterSection = document.getElementById("letterSection");
+
+// 页面初始显示逻辑
+if(!savedPast && !savedLock){
+  editor.style.display = "block"; // 显示编辑界面
+} else {
+  intro.style.display = "block"; // 显示封面
+}
+
+// 保存信件
+document.getElementById("saveBtn").onclick = () => {
+  const past = document.getElementById("pastText").value;
+  const lock = document.getElementById("lockTextInput").value;
+  if(!past && !lock) return alert("请至少输入一些内容！");
+  localStorage.setItem("pastText", past);
+  localStorage.setItem("lockText", lock);
+  document.getElementById("savedNotice").innerText="✅ 已保存，编辑界面关闭。";
+  setTimeout(()=>{
+    editor.style.display = "none";
+    intro.style.display = "block";
+  }, 500);
+};
+
+// 清除已保存内容
+document.querySelectorAll(".clearBtn").forEach(btn => {
+  btn.onclick = () => {
+    localStorage.removeItem("pastText");
+    localStorage.removeItem("lockText");
+    localStorage.removeItem("reply");
+    document.getElementById("pastText").value = "";
+    document.getElementById("lockTextInput").value = "";
+    document.getElementById("savedNotice").innerText = "🗑️ 已清除保存内容，可重新编辑。";
+    // 切回编辑界面
+    editor.style.display = "block";
+    intro.style.display = "none";
+    letterSection.style.display = "none";
+  }
+});
+
+
+
+// 打开信件
+document.getElementById("openBtn").onclick = () => {
+  intro.style.display = "none";
+  letterSection.style.display = "block";
+  
+  
+  
+  document.querySelectorAll(".paragraph")
+    .forEach((p,i)=>setTimeout(()=>p.classList.add("show"),i*1200));
+	
+	
+
+  // 正文随时显示
+  document.getElementById("pastDisplay").innerText = localStorage.getItem("pastText") || "";
+
+  const lockDisplay = document.getElementById("lockDisplay");
+
+  if(locked){
+    // 显示未解锁提示
+    lockDisplay.innerHTML = "🕰️ 内容尚未解锁<br><span id='countdown'></span>";
+
+    // 倒计时
+    const countdownSpan = document.getElementById("countdown");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = target - now; // 毫秒
+      if(diff <= 0){
+        // 到时间了
+        lockDisplay.innerText = localStorage.getItem("lockText") || "";
+        document.body.classList.add("morning");
+       // document.getElementById("replyBox").style.display = "block";
+        if(savedReply) document.getElementById("savedReply").innerText = savedReply;
+        clearInterval(timer);
+        return;
+      }
+      const days = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      countdownSpan.innerText = `还剩 ${days} 天 ${hours} 小时 ${minutes} 分 ${seconds} 秒`;
+    }
+
+    updateCountdown(); // 立即显示一次
+    const timer = setInterval(updateCountdown, 1000);
+
+  } else {
+    // 已到解锁时间
+    lockDisplay.innerText = localStorage.getItem("lockText") || "";
+    document.body.classList.add("morning");
+   // document.getElementById("replyBox").style.display = "block";
+    if(savedReply) document.getElementById("savedReply").innerText = savedReply;
+  }
+};
+
+
+// 留言保存
+function saveReply(){
+  const val = document.getElementById("reply").value;
+  localStorage.setItem("reply", val);
+  document.getElementById("savedReply").innerText="✅ 已保存。";
+}
+</script>
+
+
+</body>
+</html>
