@@ -52,8 +52,8 @@ document.querySelectorAll(".clearBtn").forEach(btn=>{
   }
 });
 
-// 倒计时
-const targetDate = new Date("2026-01-15T11:10:00").getTime();
+// 倒计时显示
+const targetDate = new Date("2026-01-15T11:15:00").getTime();
 const countdownEl = document.getElementById("countdown");
 
 setInterval(()=>{
@@ -71,22 +71,21 @@ setInterval(()=>{
   }
 },1000);
 
-// 同步到云端
+// --- 同步到 Google Apps Script Web App ---
 document.getElementById("syncToCloudBtn").onclick = async () => {
   const past = document.getElementById("pastText").value;
   const lock = document.getElementById("lockTextInput").value;
-
-  const webAppUrl = "https://script.google.com/macros/s/AKfycbwT23iRGtgJwTZ-H4kdrqyJBwsuVDOUbq5FHKT5MdfidroRl6zVlk5yV9G8QiqpoqHv/exec"; // 替换成你的 URL
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbwT23iRGtgJwTZ-H4kdrqyJBwsuVDOUbq5FHKT5MdfidroRl6zVlk5yV9G8QiqpoqHv/exec"; // 步骤3得到的 Web App URL
 
   try {
     const res = await fetch(webAppUrl, {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({past, lock})
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ past, lock })
     });
-    const text = await res.text();
-    alert("✅ 已同步到云端: " + text);
-  } catch(e){
+    const data = await res.text();
+    alert("✅ 已同步到云端: " + data);
+  } catch(e) {
     alert("❌ 同步失败: " + e);
   }
 };
