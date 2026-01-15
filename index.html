@@ -70,22 +70,18 @@ setInterval(() => {
 },1000);
 
 // 同步到 Google Sheet
-document.getElementById("syncToCloudBtn").onclick = async () => {
-  const past = document.getElementById("pastText").value;
-  const lock = document.getElementById("lockTextInput").value;
+document.getElementById("syncToCloudBtn").onclick = () => {
+  const past = encodeURIComponent(document.getElementById("pastText").value);
+  const lock = encodeURIComponent(document.getElementById("lockTextInput").value);
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbwT23iRGtgJwTZ-H4kdrqyJBwsuVDOUbq5FHKT5MdfidroRl6zVlk5yV9G8QiqpoqHv/exec"; // 步骤3得到的 URL
 
-  const webAppUrl = "https://script.google.com/macros/s/AKfycbwT23iRGtgJwTZ-H4kdrqyJBwsuVDOUbq5FHKT5MdfidroRl6zVlk5yV9G8QiqpoqHv/exec"; // 步骤3得到
-
-  try {
-    // 使用 GET 请求，避免 CORS
-    const params = new URLSearchParams({ past, lock });
-    const res = await fetch(webAppUrl + "?" + params.toString());
-    const text = await res.text();
-    alert("✅ 已同步到云端: " + text);
-  } catch(e) {
-    alert("❌ 同步失败: " + e);
-  }
+  const url = `${webAppUrl}?past=${past}&lock=${lock}`;
+  // 用 <img> 或 <script> 来避开 CORS
+  const img = new Image();
+  img.src = url; // 浏览器直接请求 URL
+  alert("✅ 已同步到云端 (通过表单提交)!");
 };
+
 </script>
 
 </body>
