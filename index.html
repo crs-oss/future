@@ -75,7 +75,7 @@ setInterval(()=>{
 document.getElementById("syncToCloudBtn").onclick = async () => {
   const past = document.getElementById("pastText").value;
   const lock = document.getElementById("lockTextInput").value;
-  const webAppUrl = "https://script.google.com/macros/s/AKfycbwT23iRGtgJwTZ-H4kdrqyJBwsuVDOUbq5FHKT5MdfidroRl6zVlk5yV9G8QiqpoqHv/exec"; // 步骤3得到的 Web App URL
+  const webAppUrl = "你的WebAppURL"; // 步骤3得到
 
   try {
     const res = await fetch(webAppUrl, {
@@ -83,9 +83,9 @@ document.getElementById("syncToCloudBtn").onclick = async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ past, lock })
     });
-    const data = await res.text();
-    alert("✅ 已同步到云端: " + data);
-  } catch(e) {
+    const text = await res.text();
+    alert(text); // ✅ 已保存到 Google Sheet
+  } catch(e){
     alert("❌ 同步失败: " + e);
   }
 };
