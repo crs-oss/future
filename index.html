@@ -53,7 +53,7 @@ document.querySelectorAll(".clearBtn").forEach(btn=>{
 });
 
 // 倒计时显示
-const targetDate = new Date("2026-01-15T11:15:00").getTime();
+const targetDate = new Date("2026-01-15T11:20:00").getTime();
 const countdownEl = document.getElementById("countdown");
 
 setInterval(()=>{
@@ -75,7 +75,7 @@ setInterval(()=>{
 document.getElementById("syncToCloudBtn").onclick = async () => {
   const past = document.getElementById("pastText").value;
   const lock = document.getElementById("lockTextInput").value;
-  const webAppUrl = "你的WebAppURL"; // 步骤3得到
+  const webAppUrl = "https://script.google.com/macros/s/AKfycbwT23iRGtgJwTZ-H4kdrqyJBwsuVDOUbq5FHKT5MdfidroRl6zVlk5yV9G8QiqpoqHv/exec"; // 步骤3得到
 
   try {
     const res = await fetch(webAppUrl, {
